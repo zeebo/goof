@@ -16,7 +16,7 @@ if err != nil {
 fmt.Println("wrote", n, "bytes")
 ```
 
-Caveat: you have to have called fmt.Printf elsewhere in your binary.
+Caveat: you have to have called `fmt.Printf` elsewhere in your binary.
 
 Goof lets you get access to globals in your binary with just the string of
 their name. How?
@@ -45,7 +45,7 @@ for _, typ := range types {
 }
 ```
 
-Caveat: the types must be possible outputs to reflect.TypeOf(val) in your binary.
+Caveat: the types must be possible outputs to `reflect.TypeOf(val)` in your binary.
 
 ## Usage
 
