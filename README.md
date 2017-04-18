@@ -47,6 +47,11 @@ for _, typ := range types {
 
 Caveat: the types must be possible outputs to reflect.TypeOf(val) in your binary.
 
+## Usage
+
+You should probably just make a single `Troop` in your binary and use that
+everywhere since it does a lot of caching and work on first use.
+
 ## How?
 
 It loads up the dwarf information of any binary it's loaded in and then does
@@ -61,3 +66,7 @@ a bunch of unsafe tom foolery to perform these dirty deeds. How unsafe is it?
 
 Do you really have to ask? OF COURSE! If you do, please let me know what terrible
 idea this enabled. I'm very interested.
+
+## Testimonials
+
+> "I can't wait to get some goof in my manhole!"
