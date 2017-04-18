@@ -32,7 +32,7 @@ if err != nil { // couldn't find it
 
 Caveat: the global must be used elsewhere in the binary somehow.
 
-Goof lets you get access to all of the reflect.Type's in your binary. How?
+Goof lets you get access to all of the `reflect.Type`s in your binary. How?
 
 ```go
 var troop goof.Troop
@@ -69,4 +69,4 @@ idea this enabled. I'm very interested.
 
 ## Testimonials
 
-> "I can't wait to get some goof in my manhole!"
+> "I can't wait to get some goof in my manhole!" @jtolds
