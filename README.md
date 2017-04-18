@@ -15,3 +15,49 @@ if err != nil {
 }
 fmt.Println("wrote", n, "bytes")
 ```
+
+Caveat: you have to have called fmt.Printf elsewhere in your binary.
+
+Goof lets you get access to globals in your binary with just the string of
+their name. How?
+
+```go
+var troop goof.Troop
+rv, err := troop.Global("net/http.DefaultServeMux")
+if err != nil { // couldn't find it
+	return err
+}
+// rv contains an addressable reflect.Value of the default ServeMux!
+```
+
+Caveat: the global must be used elsewhere in the binary somehow.
+
+Goof lets you get access to all of the reflect.Type's in your binary. How?
+
+```go
+var troop goof.Troop
+types, err := troop.Types()
+if err != nil { // something went wrong getting them
+	return err
+}
+for _, typ := range types {
+	fmt.Println(typ)
+}
+```
+
+Caveat: the types must be possible outputs to reflect.TypeOf(val) in your binary.
+
+## How?
+
+It loads up the dwarf information of any binary it's loaded in and then does
+a bunch of unsafe tom foolery to perform these dirty deeds. How unsafe is it?
+
+- Reusing needles unsafe.
+- Jumping into a shark tank with a steak swimming suit unsafe.
+- Carnival ride unsafe.
+- Driving on the wrong side of the highway blindfolded unsafe.
+
+## Should I use this?
+
+Do you really have to ask? OF COURSE! If you do, please let me know what terrible
+idea this enabled. I'm very interested.
