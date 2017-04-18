@@ -69,4 +69,6 @@ idea this enabled. I'm very interested.
 
 ## Testimonials
 
-> "I can't wait to get some goof in my manhole!" @jtolds
+> "I can't wait to get some goof in my manhole!"
+
+- @jtolds https://github.com/jtolds/go-manhole
