@@ -72,3 +72,5 @@ idea this enabled. I'm very interested.
 > "I can't wait to get some goof in my [manhole](https://github.com/jtolds/go-manhole)!" - [@jtolds](https://github.com/jtolds)
 
 > "README is hilarious :joy:"
+
+> "Now I just need to come up with something horrendously risky to use this for..."
