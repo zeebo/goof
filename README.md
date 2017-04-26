@@ -13,7 +13,7 @@ n, err := out[0].(int), out[1].(error)
 if err != nil {
 	return err
 }
-fmt.Println("wrote", n, "bytes")
+fmt.Printf("wrote %d bytes\n", n)
 ```
 
 Caveat: you have to have called `fmt.Printf` elsewhere in your binary.
