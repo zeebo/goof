@@ -27,6 +27,13 @@ func (suite) TestCall(t *testing.T) {
 	}
 }
 
+func (suite) TestCallPrintf(t *testing.T) {
+	fmt.Printf("hello world\n")
+	if _, err := troop.Call("fmt.Printf", "hello world\n"); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func (suite) TestCallFailures(t *testing.T) {
 	type is []interface{}
 

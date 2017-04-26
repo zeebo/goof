@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"reflect"
 	"sort"
+	"strings"
 	"unsafe"
 )
 
@@ -21,6 +22,11 @@ func (t *Troop) addTypes() error {
 			t.addType(typ)
 		}
 	}
+
+	// special cased types
+	t.types["*void"] = unsafePointerType
+	t.types["**void"] = reflect.PtrTo(unsafePointerType)
+
 	return nil
 }
 
@@ -90,7 +96,25 @@ func (t *Troop) findDwarfType(dtyp dwarf.Type) (reflect.Type, error) {
 	// TODO(jeff): we can synthesize some of these dwarf types at runtime,
 	// but hopefully we got enough of them when we loaded up all of the
 	// types. The problematic types are: 1. named types, 2. recursive types.
-	dname := dtyp.Common().Name
+	var dname string
+	switch dtyp := dtyp.(type) {
+	case *dwarf.StructType:
+		if dtyp.StructName != "" {
+			dname = dtyp.StructName
+		} else {
+			dname = dtyp.Defn()
+		}
+	default:
+		dname = dtyp.String()
+	}
+
+	// heh this is super hacky, but what isn't!?
+	if strings.HasPrefix(dname, "*struct ") &&
+		!strings.HasPrefix(dname, "*struct {") {
+
+		dname = "*" + dname[len("*struct "):]
+	}
+
 	typ, ok := t.types[dname]
 	if !ok {
 		return nil, fmt.Errorf("dwarf type %q unknown", dname)

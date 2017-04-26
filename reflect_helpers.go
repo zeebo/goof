@@ -55,7 +55,9 @@ func (s sortTypesByString) Swap(i, j int) {
 	s.types[i], s.types[j] = s.types[j], s.types[i]
 }
 
-var unsafePointerType = reflect.TypeOf(new(unsafe.Pointer)).Elem()
+var (
+	unsafePointerType = reflect.TypeOf((*unsafe.Pointer)(nil)).Elem()
+)
 
 // dwarfName does a best effort to return the dwarf entry name for the reflect
 // type so that we can map between them. here's hoping it doesn't do it wrong
