@@ -5,7 +5,7 @@ name. How?
 
 ```go
 var troop goof.Troop
-out, err := troop.Call("fmt.Printf", "hello %s", []interface{}{"world"})
+out, err := troop.Call("fmt.Fprintf", os.Stdout, "hello %s", []interface{}{"world"})
 if err != nil { // some error calling the function
 	return err
 }
@@ -16,7 +16,7 @@ if err != nil {
 fmt.Printf("wrote %d bytes\n", n)
 ```
 
-Caveat: you have to have called `fmt.Printf` elsewhere in your binary.
+Caveat: you have to have called `fmt.Fprintf` elsewhere in your binary.
 
 Goof lets you get access to globals in your binary with just the string of
 their name. How?

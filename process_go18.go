@@ -11,12 +11,14 @@ import (
 	"io"
 	"os"
 	"runtime"
+
+	"github.com/zeebo/errs"
 )
 
 func openProc() (*dwarf.Data, error) {
 	path, err := os.Executable()
 	if err != nil {
-		return nil, err
+		return nil, errs.Wrap(err)
 	}
 
 	var fh interface {
@@ -35,9 +37,10 @@ func openProc() (*dwarf.Data, error) {
 		return nil, fmt.Errorf("unknown goos: %q", runtime.GOOS)
 	}
 	if err != nil {
-		return nil, err
+		return nil, errs.Wrap(err)
 	}
 	defer fh.Close()
 
-	return fh.DWARF()
+	data, err := fh.DWARF()
+	return data, errs.Wrap(err)
 }

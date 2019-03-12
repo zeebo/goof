@@ -6,6 +6,8 @@ import (
 	"reflect"
 	"sort"
 	"unsafe"
+
+	"github.com/zeebo/errs"
 )
 
 func (t *Troop) addFunctions() error {
@@ -14,7 +16,7 @@ func (t *Troop) addFunctions() error {
 	for {
 		entry, err := reader.Next()
 		if err != nil {
-			return err
+			return errs.Wrap(err)
 		}
 		if entry == nil {
 			break

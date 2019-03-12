@@ -5,14 +5,17 @@ package goof
 import (
 	"debug/dwarf"
 	"debug/elf"
+
+	"github.com/zeebo/errs"
 )
 
 func openProc() (*dwarf.Data, error) {
 	fh, err := elf.Open("/proc/self/exe")
 	if err != nil {
-		return nil, err
+		return nil, errs.Wrap(err)
 	}
 	defer fh.Close()
 
-	return fh.DWARF()
+	data, err := fh.DWARF()
+	return data, errs.Wrap(err)
 }

@@ -5,8 +5,9 @@ package goof
 import (
 	"debug/dwarf"
 	"debug/macho"
-	"fmt"
 	"unsafe"
+
+	"github.com/zeebo/errs"
 )
 
 // #include <mach-o/dyld.h>
@@ -21,14 +22,15 @@ func openProc() (*dwarf.Data, error) {
 
 	size := C.uint32_t(bufsize)
 	if rc := C._NSGetExecutablePath(buf, &size); rc != 0 {
-		return nil, fmt.Errorf("error in cgo call to get path: %d", rc)
+		return nil, errs.New("error in cgo call to get path: %d", rc)
 	}
 
 	fh, err := macho.Open(C.GoString(buf))
 	if err != nil {
-		return nil, err
+		return nil, errs.Wrap(err)
 	}
 	defer fh.Close()
 
-	return fh.DWARF()
+	dwarf, err := fh.DWARF()
+	return dwarf, errs.Wrap(err)
 }

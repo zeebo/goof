@@ -3,13 +3,14 @@ package goof
 import (
 	"errors"
 	"fmt"
+	"os"
 	"testing"
 )
 
 //go:noinline
 func Barf(err error) int {
 	if err != nil {
-		err.Error()
+		return len(err.Error())
 	}
 	return 5
 }
@@ -27,23 +28,24 @@ func (suite) TestCall(t *testing.T) {
 	}
 }
 
-func (suite) TestCallPrintf(t *testing.T) {
-	fmt.Printf("hello world\n")
-	if _, err := troop.Call("fmt.Printf", "hello world\n"); err != nil {
+func (suite) TestCallFprintf(t *testing.T) {
+	fmt.Fprintf(os.Stdout, "hello world\n")
+	if _, err := troop.Call("fmt.Fprintf", os.Stdout, "hello world\n"); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func (suite) TestCallFailures(t *testing.T) {
+	symbol := fmt.Sprintf("%s.Barf", importPath)
 	type is []interface{}
 
 	cases := []struct {
 		name string
 		args []interface{}
 	}{
-		{"fmt.Printf", is{1, 2, 3, 4, 5}}, // too many args
-		{"fmt.Printf", is{false}},         // wrong arg kind
-		{"fmt.Printf", is{"hello", 2}},    // wrong arg kind
+		{symbol, is{nil, nil}},   // too many args
+		{symbol, is{false}},      // wrong arg kind
+		{symbol, is{"hello", 2}}, // wrong arg kind
 	}
 
 	for i, c := range cases {

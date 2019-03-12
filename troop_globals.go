@@ -7,6 +7,8 @@ import (
 	"sort"
 	"strings"
 	"unsafe"
+
+	"github.com/zeebo/errs"
 )
 
 var statictmpRe = regexp.MustCompile(`statictmp_\d+$`)
@@ -17,7 +19,7 @@ func (t *Troop) addGlobals() error {
 	for {
 		entry, err := reader.Next()
 		if err != nil {
-			return err
+			return errs.Wrap(err)
 		}
 		if entry == nil {
 			break
