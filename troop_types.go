@@ -2,11 +2,12 @@ package goof
 
 import (
 	"debug/dwarf"
-	"fmt"
 	"reflect"
 	"sort"
 	"strings"
 	"unsafe"
+
+	"github.com/zeebo/errs"
 )
 
 //go:linkname typelinks reflect.typelinks
@@ -117,7 +118,7 @@ func (t *Troop) findDwarfType(dtyp dwarf.Type) (reflect.Type, error) {
 
 	typ, ok := t.types[dname]
 	if !ok {
-		return nil, fmt.Errorf("dwarf type %q unknown", dname)
+		return nil, errs.New("dwarf type %q unknown", dname)
 	}
 	return typ, nil
 }

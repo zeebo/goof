@@ -2,7 +2,6 @@ package goof
 
 import (
 	"debug/dwarf"
-	"fmt"
 	"reflect"
 	"sort"
 	"unsafe"
@@ -78,27 +77,27 @@ func (t *Troop) Call(name string, args ...interface{}) ([]interface{}, error) {
 	// caller passed the appropriate things.
 	entry, ok := t.functions[name]
 	if !ok {
-		return nil, fmt.Errorf("call %s: unknown or uncallable function", name)
+		return nil, errs.New("call %s: unknown or uncallable function", name)
 	}
 	pc, dtypes := entry.pc, entry.dtypes
 
 	// make sure they didn't pass more arguments than total types
 	num_results := len(dtypes) - len(args)
 	if num_results < 0 {
-		return nil, fmt.Errorf("call %s: too many args", name)
+		return nil, errs.New("call %s: too many args", name)
 	}
 
 	// build the arguments, checking consistency and doing hacks to make it
 	// nice to use.
 	in, in_types, err := t.buildArguments(args, dtypes[:len(args)])
 	if err != nil {
-		return nil, fmt.Errorf("call %s: %v", name, err)
+		return nil, errs.New("call %s: %v", name, err)
 	}
 
 	// the rest must be the return values, RIGHT? LOL
 	out_types, err := t.findDwarfTypes(dtypes[len(args):])
 	if err != nil {
-		return nil, fmt.Errorf("call %s: %v", name, err)
+		return nil, errs.New("call %s: %v", name, err)
 	}
 
 	// make it happen
@@ -111,7 +110,7 @@ func (t *Troop) buildArguments(args []interface{}, dtypes []dwarf.Type) (
 	[]reflect.Value, []reflect.Type, error) {
 
 	if len(args) != len(dtypes) {
-		return nil, nil, fmt.Errorf("number of arguments does not match")
+		return nil, nil, errs.New("number of arguments does not match")
 	}
 
 	// so I want the Call signatrue to have args passed as ...interface{}
@@ -137,7 +136,7 @@ func (t *Troop) buildArguments(args []interface{}, dtypes []dwarf.Type) (
 
 		val, err := t.constructValue(arg, dtyp)
 		if err != nil {
-			return nil, nil, fmt.Errorf("arg %d: %v", i, err)
+			return nil, nil, errs.New("arg %d: %v", i, err)
 		}
 
 		in_types = append(in_types, val.Type())
@@ -169,13 +168,13 @@ func (t *Troop) consistentValue(arg interface{}, dtyp dwarf.Type) (
 	}
 	if arg == nil {
 		if !reflectCanBeNil(rtyp) {
-			return nil, fmt.Errorf("passing nil to non-nillable type: %v",
+			return nil, errs.New("passing nil to non-nillable type: %v",
 				rtyp)
 		}
 		return rtyp, nil
 	}
 	if !reflect.TypeOf(arg).ConvertibleTo(rtyp) {
-		return nil, fmt.Errorf("cannot convert %v to %T", rtyp, arg)
+		return nil, errs.New("cannot convert %v to %T", rtyp, arg)
 	}
 	return rtyp, nil
 }

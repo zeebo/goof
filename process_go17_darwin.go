@@ -1,3 +1,4 @@
+//go:build !go1.8 && darwin
 // +build !go1.8,darwin
 
 package goof

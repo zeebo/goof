@@ -3,8 +3,9 @@ package goof
 import (
 	"debug/dwarf"
 	"encoding/binary"
-	"fmt"
 	"unsafe"
+
+	"github.com/zeebo/errs"
 )
 
 func dwarfTypeName(dtyp dwarf.Type) string {
@@ -57,7 +58,7 @@ func getFunctionArgTypes(data *dwarf.Data, entry *dwarf.Entry) (
 func entryType(data *dwarf.Data, entry *dwarf.Entry) (dwarf.Type, error) {
 	off, ok := entry.Val(dwarf.AttrType).(dwarf.Offset)
 	if !ok {
-		return nil, fmt.Errorf("unable to find type offset for entry")
+		return nil, errs.New("unable to find type offset for entry")
 	}
 	return data.Type(off)
 }
@@ -65,17 +66,17 @@ func entryType(data *dwarf.Data, entry *dwarf.Entry) (dwarf.Type, error) {
 func entryLocation(data *dwarf.Data, entry *dwarf.Entry) (uint64, error) {
 	loc, ok := entry.Val(dwarf.AttrLocation).([]byte)
 	if !ok {
-		return 0, fmt.Errorf("unable to find location for entry")
+		return 0, errs.New("unable to find location for entry")
 	}
 	if len(loc) == 0 {
-		return 0, fmt.Errorf("location had no data")
+		return 0, errs.New("location had no data")
 	}
 
 	// only support this opcode. did you know dwarf location information is
 	// a stack based programming language with opcodes and stuff? i wonder
 	// how many interpreters for that have code execution bugs in them.
 	if loc[0] != 0x03 {
-		return 0, fmt.Errorf("can't interpret location information")
+		return 0, errs.New("can't interpret location information")
 	}
 
 	// oh man let's also just assume that the dwarf info is written in the
@@ -86,7 +87,7 @@ func entryLocation(data *dwarf.Data, entry *dwarf.Entry) (uint64, error) {
 	case 8:
 		return uint64(hostOrder.Uint64(loc[1:])), nil
 	default:
-		return 0, fmt.Errorf("what kind of computer is this?")
+		return 0, errs.New("what kind of computer is this?")
 	}
 }
 

@@ -1,3 +1,4 @@
+//go:build go1.8
 // +build go1.8
 
 package goof
@@ -7,7 +8,6 @@ import (
 	"debug/elf"
 	"debug/macho"
 	"debug/pe"
-	"fmt"
 	"io"
 	"os"
 	"runtime"
@@ -34,7 +34,7 @@ func openProc() (*dwarf.Data, error) {
 	case "windows":
 		fh, err = pe.Open(path)
 	default:
-		return nil, fmt.Errorf("unknown goos: %q", runtime.GOOS)
+		return nil, errs.New("unknown goos: %q", runtime.GOOS)
 	}
 	if err != nil {
 		return nil, errs.Wrap(err)

@@ -29,8 +29,8 @@ func (suite) TestCall(t *testing.T) {
 }
 
 func (suite) TestCallFprintf(t *testing.T) {
-	fmt.Fprintf(os.Stdout, "hello world\n")
-	if _, err := troop.Call("fmt.Fprintf", os.Stdout, "hello world\n"); err != nil {
+	fmt.Fprintf(os.Stdout, "hello world %d\n", 2)
+	if _, err := troop.Call("fmt.Fprintf", os.Stdout, "hello world %d\n", []interface{}{2}); err != nil {
 		t.Fatal(err)
 	}
 }
