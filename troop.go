@@ -13,6 +13,7 @@ type Troop struct {
 	types     map[string]reflect.Type
 	globals   map[string]reflect.Value
 	functions map[string]functionCacheEntry
+	failures  map[string]error
 }
 
 type functionCacheEntry struct {
@@ -25,6 +26,8 @@ func (t *Troop) init() {
 	if t.err != nil {
 		return
 	}
+
+	t.failures = make(map[string]error)
 
 	t.types = make(map[string]reflect.Type)
 	t.err = t.addTypes()

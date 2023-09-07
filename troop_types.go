@@ -2,6 +2,7 @@ package goof
 
 import (
 	"debug/dwarf"
+	"fmt"
 	"reflect"
 	"sort"
 	"strings"
@@ -37,6 +38,12 @@ func (t *Troop) addType(typ reflect.Type) {
 		return
 	}
 	t.types[name] = typ
+
+	defer func() {
+		if r := recover(); r != nil {
+			t.failures[name] = fmt.Errorf("failed to add type %q (%v): %v", name, typ, r)
+		}
+	}()
 
 	switch typ.Kind() {
 	case reflect.Ptr, reflect.Chan, reflect.Slice, reflect.Array:
@@ -79,6 +86,19 @@ func (t *Troop) Types() ([]reflect.Type, error) {
 	}
 	sort.Sort(typesByString(out))
 	return out, nil
+}
+
+func (t *Troop) Type(name string) (reflect.Type, error) {
+	if err := t.check(); err != nil {
+		return nil, err
+	}
+
+	entry, ok := t.types[name]
+	if !ok {
+		return nil, errs.New("type %s: unknown type", name)
+	}
+
+	return entry, nil
 }
 
 func (t *Troop) findDwarfTypes(dtypes []dwarf.Type) ([]reflect.Type, error) {
