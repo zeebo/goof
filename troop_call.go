@@ -67,7 +67,7 @@ func (t *Troop) Functions() ([]string, error) {
 	return out, nil
 }
 
-func (t *Troop) Call(name string, args ...interface{}) ([]interface{}, error) {
+func (t *Troop) Call(name string, args ...interface{}) ([]reflect.Value, error) {
 	if err := t.check(); err != nil {
 		return nil, err
 	}
@@ -103,7 +103,7 @@ func (t *Troop) Call(name string, args ...interface{}) ([]interface{}, error) {
 	// make it happen
 	fn_typ := reflect.FuncOf(in_types, out_types, false)
 	fn := reflect.ValueOf(makeInterface(dataPtr(fn_typ), unsafe.Pointer(&pc)))
-	return ifaces(fn.Call(in)), nil
+	return fn.Call(in), nil
 }
 
 func (t *Troop) buildArguments(args []interface{}, dtypes []dwarf.Type) (

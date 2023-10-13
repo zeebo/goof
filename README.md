@@ -9,7 +9,7 @@ out, err := troop.Call("fmt.Fprintf", os.Stdout, "hello %s", []interface{}{"worl
 if err != nil { // some error calling the function
 	return err
 }
-n, err := out[0].(int), out[1].(error)
+n, err := out[0].Int(), out[1].Interface().(error)
 if err != nil {
 	return err
 }
