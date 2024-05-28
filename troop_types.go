@@ -11,11 +11,41 @@ import (
 	"github.com/zeebo/errs"
 )
 
-//go:linkname typelinks reflect.typelinks
-func typelinks() (sections []unsafe.Pointer, offset [][]int32)
+func (t *Troop) typelinks() ([]unsafe.Pointer, [][]uint32, error) {
+	reader := t.data.Reader()
+	for {
+		entry, err := reader.Next()
+		if err != nil {
+			return nil, nil, errs.Wrap(err)
+		} else if entry == nil {
+			break
+		} else if entry.Tag != dwarf.TagSubprogram {
+			continue
+		}
+		name, ok := entry.Val(dwarf.AttrName).(string)
+		if !ok || name != "reflect.typelinks" {
+			continue
+		}
+		pc, ok := entry.Val(dwarf.AttrLowpc).(uint64)
+		if !ok {
+			continue
+		}
+		fn_typ := reflect.FuncOf(nil, []reflect.Type{
+			reflect.TypeOf([]unsafe.Pointer(nil)),
+			reflect.TypeOf([][]uint32(nil)),
+		}, false)
+		fn := reflect.ValueOf(makeInterface(dataPtr(fn_typ), unsafe.Pointer(&pc)))
+		out := ifaces(fn.Call(nil))
+		return out[0].([]unsafe.Pointer), out[1].([][]uint32), nil
+	}
+	return nil, nil, errs.New("unable to find reflect.typelinks")
+}
 
 func (t *Troop) addTypes() error {
-	sections, offset := typelinks()
+	sections, offset, err := t.typelinks()
+	if err != nil {
+		return err
+	}
 	for i, offs := range offset {
 		section := sections[i]
 		for _, off := range offs {
