@@ -36,7 +36,18 @@ func (t *Troop) typelinks() ([]unsafe.Pointer, [][]uint32, error) {
 		}, false)
 		fn := reflect.ValueOf(makeInterface(dataPtr(fn_typ), unsafe.Pointer(&pc)))
 		out := ifaces(fn.Call(nil))
-		return out[0].([]unsafe.Pointer), out[1].([][]uint32), nil
+		if len(out) != 2 {
+			return nil, nil, errs.New("wrong number of output results: %d", len(out))
+		}
+		sections, ok := out[0].([]unsafe.Pointer)
+		if !ok {
+			return nil, nil, errs.New("wrong type of sections: %T", out[0])
+		}
+		offsets, ok := out[1].([][]uint32)
+		if !ok {
+			return nil, nil, errs.New("wrong type of offsets: %T", out[1])
+		}
+		return sections, offsets, nil
 	}
 	return nil, nil, errs.New("unable to find reflect.typelinks")
 }
