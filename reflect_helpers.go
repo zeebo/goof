@@ -8,14 +8,6 @@ import (
 	"unsafe"
 )
 
-func ifaces(values []reflect.Value) []interface{} {
-	out := make([]interface{}, 0, len(values))
-	for _, value := range values {
-		out = append(out, value.Interface())
-	}
-	return out
-}
-
 func reflectCanBeNil(rtyp reflect.Type) bool {
 	switch rtyp.Kind() {
 	case reflect.Interface,
